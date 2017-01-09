@@ -7,6 +7,7 @@
 //
 
 #import "AnimationView.h"
+
 @interface AnimationView()
 
 @property (nonatomic, strong) CAShapeLayer *circleLayer;
@@ -22,14 +23,13 @@
     self = [super initWithFrame:frame];
     
     if (self) {
-        
-        
+
         self.backgroundColor = [UIColor whiteColor];
 
         [self.layer addSublayer:self.circleLayer];
         [self.layer addSublayer:self.satelliteLayer];
         
-        //[self startAnimation];
+        [self startAnimation];
     }
     
     return self;
@@ -52,26 +52,21 @@
     if (!_satelliteLayer) {
         
         _satelliteLayer = [CAShapeLayer layer];
-        UIBezierPath *path = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(-20,-20, 260, 260)];
-        _satelliteLayer.path = path.CGPath;
-        _satelliteLayer.fillColor = [UIColor clearColor].CGColor;
-        _satelliteLayer.strokeColor = [UIColor greenColor].CGColor;
-//        UIBezierPath *path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(-90, -90) radius:20 startAngle:0 endAngle:M_PI * 2 clockwise:YES];
-//        _satelliteLayer.path = path.CGPath;
-        _satelliteLayer.frame = CGRectMake(100, 100, 40, 40);
-        //_satelliteLayer.position = self.center;
-        //_satelliteLayer.backgroundColor = [UIColor redColor].CGColor;
-        //_satelliteLayer.contents = (__bridge id _Nullable)([UIImage imageNamed:@"28"].CGImage);
-        NSLog(@"position=== %@",NSStringFromCGPoint(_satelliteLayer.position));
+        CGFloat layerX = self.center.x - 120;
+        CGFloat layerY = self.center.y - 120;
+        _satelliteLayer.frame = CGRectMake(layerX, layerY, 40, 40);
+        _satelliteLayer.contents = (__bridge id _Nullable)([UIImage imageNamed:@"28"].CGImage);
+        NSLog(@"position==%@",NSStringFromCGPoint(_satelliteLayer.position));
+
     }
     
     return _satelliteLayer;
 }
 - (void)startAnimation
 {
-    NSLog(@"position=== %@",NSStringFromCGPoint(_satelliteLayer.position));
-    
-    UIBezierPath *path = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(-30,-30, 240, 240)];
+    CGFloat layerX = self.center.x - 120;
+    CGFloat layerY = self.center.y - 120;
+    UIBezierPath *path = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(layerX - _satelliteLayer.position.x,layerY - _satelliteLayer.position.y, 240, 240)];
     
     CAKeyframeAnimation *orbit = [CAKeyframeAnimation animation];
     orbit.keyPath = @"position";
@@ -81,6 +76,8 @@
     orbit.repeatCount = HUGE_VALF;
     orbit.calculationMode = kCAAnimationPaced;
     orbit.rotationMode = kCAAnimationRotateAuto;
+    
+    orbit.timingFunction = [CAMediaTimingFunction functionWithControlPoints:0.5:0:0.9:0.7];
     
     [_satelliteLayer addAnimation:orbit forKey:@"orbit"];
 }
